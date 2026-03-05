@@ -1,174 +1,318 @@
 # SkillSync — Learning Momentum Intelligence Platform
 
-A production-ready full-stack SaaS application that tracks skill development, measures learning consistency, detects stagnation, and visualizes growth through rich analytics.
+SkillSync is a full-stack web application designed to help people **track their learning progress, stay consistent, and understand how their skills evolve over time**.
 
-## Architecture
+Instead of simply logging hours, SkillSync analyzes learning behavior to generate insights such as **momentum scores, learning streaks, activity heatmaps, and progress analytics**.
+
+The goal of SkillSync is to solve a common problem: many people start learning something but struggle to stay consistent or measure real improvement. SkillSync provides a structured way to track learning and visualize growth.
+
+---
+
+# Architecture
+
+SkillSync follows a modern full-stack architecture with a clear separation between frontend and backend services.
 
 ```
 skillsync/
-├── backend/           FastAPI + SQLAlchemy + PostgreSQL + Alembic
+├── backend/           FastAPI + SQLAlchemy + PostgreSQL
 │   ├── app/
-│   │   ├── models/    SQLAlchemy ORM models (User, Skill, ProgressLog, SkillMetrics)
-│   │   ├── schemas/   Pydantic v2 request/response schemas
-│   │   ├── routers/   API route handlers (auth, skills, progress, dashboard, metrics)
-│   │   └── services/  Business logic (momentum, streaks, stagnation, heatmap)
+│   │   ├── models/    Database models (User, Skill, ProgressLog, SkillMetrics)
+│   │   ├── schemas/   Request/response validation schemas
+│   │   ├── routers/   API endpoints (auth, skills, progress, dashboard)
+│   │   └── services/  Core business logic and analytics
 │   ├── alembic/       Database migrations
-│   └── tests/         pytest test suite
-└── frontend/          React 18 + TypeScript + Vite
+│   └── tests/         Automated tests
+│
+└── frontend/          React + TypeScript + Vite
     └── src/
-        ├── api/       Axios API layer
-        ├── store/     Zustand state management
-        ├── pages/     Route-level page components
-        └── components/ Reusable UI components
+        ├── api/       API communication layer
+        ├── store/     Global state management (Zustand)
+        ├── pages/     Application pages
+        └── components/Reusable UI components
 ```
 
-## Tech Stack
+The **frontend communicates with the backend via REST APIs**, while the backend handles authentication, analytics computation, and database operations.
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS v4 |
-| State | Zustand with persist middleware |
-| Charts | Recharts |
-| Animation | Framer Motion |
-| Backend | FastAPI, Uvicorn |
-| ORM | SQLAlchemy 2.0 |
-| Migrations | Alembic |
-| Database | PostgreSQL 16 |
-| Auth | JWT (python-jose), bcrypt (passlib) |
-| Containerization | Docker, Docker Compose |
+---
 
-## Features
+# Tech Stack
 
-- **Momentum Scores** — Weighted formula: 35% recency + 30% consistency + 20% volume + 15% acceleration
-- **Streak Tracking** — Consecutive day streaks with 1-day grace period
-- **Stagnation Detection** — Automatic alerts when a skill has been inactive 14+ days
-- **GitHub-style Heatmap** — Full-year learning activity visualization
-- **Progress to Goal** — Track hours toward per-skill targets
-- **Rich Analytics** — Momentum trends, weekly patterns, skill distribution charts
-- **JWT Authentication** — Secure registration, login, protected routes
+### Frontend
 
-## Local Development
+* React 18
+* TypeScript
+* Vite
+* Tailwind CSS
+* Zustand (state management)
+* Framer Motion (animations)
+* Recharts (data visualization)
 
-### Prerequisites
-- Docker & Docker Compose
-- Node.js 20+ (for frontend dev without Docker)
-- Python 3.12+ (for backend dev without Docker)
+### Backend
 
-### Quick Start with Docker
+* FastAPI
+* SQLAlchemy ORM
+* PostgreSQL
+* Alembic (database migrations)
+* JWT Authentication (python-jose)
+* Password hashing with bcrypt (passlib)
 
-```bash
+### DevOps
+
+* Docker
+* Docker Compose
+
+---
+
+# Core Features
+
+### Momentum Scores
+
+Each skill receives a **momentum score** calculated from multiple learning factors including recency, consistency, learning volume, and acceleration.
+
+### Streak Tracking
+
+Tracks **consecutive learning days** to help users maintain consistent learning habits.
+
+### Stagnation Detection
+
+Automatically detects when a skill has **not been practiced for 14+ days**.
+
+### GitHub-Style Heatmap
+
+Displays learning activity using a **year-long contribution grid** similar to GitHub.
+
+### Progress Tracking
+
+Users can set **target learning hours for each skill** and monitor their progress.
+
+### Learning Analytics
+
+Dashboards provide insights including:
+
+* Weekly learning patterns
+* Momentum trends
+* Skill distribution
+* Activity heatmaps
+
+### Secure Authentication
+
+SkillSync uses **JWT-based authentication** with:
+
+* Secure password hashing
+* Protected API routes
+* Token-based session management
+
+---
+
+# Running the Project Locally
+
+## Requirements
+
+Before running the project, ensure you have:
+
+* Docker & Docker Compose
+* Node.js 20+
+* Python 3.12+
+
+---
+
+# Quick Start (Docker)
+
+The easiest way to run SkillSync locally is using Docker.
+
+```
 cd skillsync
 cp backend/.env.example backend/.env
 docker compose up --build
 ```
 
-Access:
-- Frontend: http://localhost:5173
-- Backend API docs: http://localhost:8000/docs
-- PostgreSQL: localhost:5432
+Once running:
 
-### Manual Setup
+Frontend
+http://localhost:5173
 
-**Backend:**
-```bash
+Backend API Docs
+http://localhost:8000/docs
+
+PostgreSQL
+localhost:5432
+
+---
+
+# Manual Setup
+
+## Backend Setup
+
+```
 cd backend
+
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+
+# Linux / Mac
+source .venv/bin/activate
+
+# Windows
+.venv\Scripts\activate
+
 pip install -r requirements.txt
+
 cp .env.example .env
-# Edit .env with your DATABASE_URL
+
 alembic upgrade head
+
 uvicorn app.main:app --reload
 ```
 
-**Frontend:**
-```bash
+---
+
+## Frontend Setup
+
+```
 cd frontend
+
 npm install
+
 cp .env.example .env
-# Set VITE_API_URL=http://localhost:8000/api/v1
+
 npm run dev
 ```
 
-### Run Tests
+Your frontend `.env` should contain:
 
-```bash
+```
+VITE_API_URL=http://localhost:8000/api/v1
+```
+
+---
+
+# Running Tests
+
+Backend tests use **pytest**.
+
+```
 cd backend
 pytest tests/ -v
 ```
 
-## API Overview
+---
 
-| Group | Endpoints |
-|-------|-----------|
-| Auth | POST /auth/register, /auth/login · GET/PUT /auth/me |
-| Skills | CRUD /skills/ · GET /skills/{id} |
-| Progress | POST /progress/ · GET /progress/?filters |
-| Dashboard | GET /dashboard/summary, /heatmap, /analytics |
-| Metrics | GET /metrics/skill/{id} · GET /metrics/leaderboard |
+# API Overview
 
-Full interactive docs at `/docs` (Swagger UI) when backend is running.
+SkillSync provides a REST API for authentication, skill management, progress tracking, and analytics.
 
-## Deployment
+| Category       | Endpoints                             |
+| -------------- | ------------------------------------- |
+| Authentication | POST /auth/register, POST /auth/login |
+| User           | GET /auth/me                          |
+| Skills         | CRUD operations for skills            |
+| Progress       | Add and retrieve learning sessions    |
+| Dashboard      | Learning analytics and heatmap        |
+| Metrics        | Skill-specific performance data       |
 
-### Backend → Render
+Interactive API documentation is available at:
 
-1. Create a new Web Service on [render.com](https://render.com)
+```
+/docs
+```
+
+when the backend server is running.
+
+---
+
+# Deployment
+
+## Backend Deployment (Render)
+
+1. Create a new **Web Service** on Render
 2. Connect your GitHub repository
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-5. Add environment variables from `backend/.env.example`
-
-### Frontend → Vercel
-
-1. Import your GitHub repository on [vercel.com](https://vercel.com)
-2. Set root directory to `frontend`
-3. Add environment variable: `VITE_API_URL=https://your-backend.onrender.com/api/v1`
-4. Deploy
-
-### Database → Neon.tech (PostgreSQL)
-
-1. Create a free PostgreSQL database on [neon.tech](https://neon.tech)
-2. Copy the connection string to `DATABASE_URL` in your backend env vars
-3. Run `alembic upgrade head` to apply migrations
-
-### Production CORS
-
-Update `CORS_ORIGINS` in your backend environment to include your Vercel domain:
-```
-CORS_ORIGINS=https://your-app.vercel.app
-```
-
-## Business Logic
-
-### Momentum Score Formula
-
-```python
-Momentum = 0.35 * recency + 0.30 * consistency + 0.20 * volume + 0.15 * acceleration
-
-recency     = 100 * exp(-0.12 * days_since_last_session)   # exponential decay
-consistency = (active_days_last_14 / 14) * 100
-volume      = min(100, (this_week_minutes / avg_weekly_minutes) * 50)
-acceleration = clamped(50 + delta_pct * 50)
-```
-
-Score bands: 0-20 Dormant · 21-40 Low · 41-60 Building · 61-80 Active · 81-100 Peak
-
-### Database Schema
+3. Build command
 
 ```
-users ──< skills ──< progress_logs
-              └──── skill_metrics (1:1 cached metrics)
+pip install -r requirements.txt
 ```
 
-## Project Structure Highlights
+4. Start command
 
-- `backend/app/services/momentum_service.py` — Core scoring algorithm
-- `backend/app/services/metrics_service.py` — Background metrics recomputation
-- `frontend/src/components/dashboard/ActivityHeatmap.tsx` — 52-week grid heatmap
-- `frontend/src/components/dashboard/MomentumGauge.tsx` — Animated SVG arc gauge
-- `frontend/src/store/dashboardStore.ts` — Central data coordinator
+```
+alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
 
-## License
+---
 
-MIT
+## Frontend Deployment (Vercel)
+
+1. Import the GitHub repository into Vercel
+2. Set the root directory to:
+
+```
+frontend
+```
+
+3. Add environment variable
+
+```
+VITE_API_URL=https://your-backend.onrender.com/api/v1
+```
+
+---
+
+## Database (Neon PostgreSQL)
+
+1. Create a PostgreSQL database on Neon
+2. Copy the connection string
+3. Add it as:
+
+```
+DATABASE_URL
+```
+
+in backend environment variables
+
+4. Run migrations:
+
+```
+alembic upgrade head
+```
+
+---
+
+# Momentum Score Calculation
+
+SkillSync calculates learning momentum using a weighted formula:
+
+```
+Momentum =
+ 0.35 × recency
++0.30 × consistency
++0.20 × volume
++0.15 × acceleration
+```
+
+Score interpretation:
+
+| Score  | Status   |
+| ------ | -------- |
+| 0–20   | Dormant  |
+| 21–40  | Low      |
+| 41–60  | Building |
+| 61–80  | Active   |
+| 81–100 | Peak     |
+
+---
+
+# Database Relationships
+
+```
+users
+  └── skills
+        └── progress_logs
+        └── skill_metrics
+```
+
+Each user can track multiple skills, and each skill records learning sessions and analytics metrics.
+
+---
+
+# License
+
+MIT License
