@@ -12,12 +12,8 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
 
-    # CORS (allow frontend access)
-    cors_origins: List[str] = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://skillsync-ar.vercel.app"
-    ]
+    # CORS (temporarily allow all origins to avoid deployment issues)
+    cors_origins: List[str] = ["*"]
 
     # Logging
     log_level: str = "INFO"
