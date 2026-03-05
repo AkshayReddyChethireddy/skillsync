@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>()(
       register: async (data) => {
         set({ isLoading: true, error: null });
         try {
-          await authApi.register(data);
+          await authApi.register({ ...data, full_name: data.full_name || undefined });
           await get().login({ email: data.email, password: data.password });
         } catch (err: unknown) {
           const msg = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail || 'Registration failed';
