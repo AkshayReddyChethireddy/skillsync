@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      SECRET_KEY: ${SECRET_KEY}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      ALGORITHM: HS256
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      LOG_LEVEL: INFO
+      ENVIRONMENT: production
+    restart: always
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      VITE_API_URL: ${VITE_API_URL}
+    restart: always
